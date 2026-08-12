@@ -39,4 +39,6 @@ const messageSchema = new mongoose.Schema(
 // Index for faster queries
 messageSchema.index({ chat: 1, createdAt: 1 });
 
-export default mongoose.model('Message', messageSchema);
+const messageModel = mongoose.model('Message', messageSchema);
+
+export default messageModel;

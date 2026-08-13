@@ -7,7 +7,7 @@ const authRouter = Router()
 
 authRouter.post("/register", registerValidation, register)
 
-authRouter.post("/login",login)
+authRouter.post("/login",loginValidation, login)
 
 authRouter.get("get-me",authMiddleware, getMe)
 

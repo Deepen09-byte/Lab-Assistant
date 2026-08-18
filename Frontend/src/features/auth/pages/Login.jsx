@@ -17,7 +17,7 @@ const Login = () => {
 
   const {handleLogin} = useAuth()
 
-  isAllOf(!loading && user){
+  if(!loading && user){
     return <Navigate to="/" replace />
   }
   

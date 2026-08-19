@@ -9,7 +9,7 @@ authRouter.post("/register", registerValidation, register)
 
 authRouter.post("/login",loginValidation, login)
 
-authRouter.get("get-me",authMiddleware, getMe)
+authRouter.get("/get-me",authMiddleware, getMe)
 
 authRouter.get("/verify-email",loginValidation, verifyEmail)
 

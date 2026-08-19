@@ -1,13 +1,18 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { response } from "express";
+import {HumanMessage} from "langchain"
 
 const model = new ChatGoogleGenerativeAI({
   model: "gemini-2.5-flash-lite",
-  apiKey: "your-api-key"
+  apiKey: process.env.GEMINI_API_KEY
 });
 
-export async function testAi(){
-    model.invoke("Why do parrots talk?").then((response) => {
-        console.log(response.text);
-    })
+export async function generateResponse(message){
+
+  const response = model.invoke([
+    new HumanMessage(message)
+  ]);
+
+  return response.text;
+
 }

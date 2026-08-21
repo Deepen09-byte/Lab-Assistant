@@ -31,9 +31,9 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Login form submitted:', formData)
+    const { email, password } = formData;
 
-    await handleLogin(email, password)
+    await handleLogin({email, password})
     navigate("/")
   }
 

@@ -11,6 +11,6 @@ authRouter.post("/login",loginValidation, login)
 
 authRouter.get("/get-me",authMiddleware, getMe)
 
-authRouter.get("/verify-email",loginValidation, verifyEmail)
+authRouter.get("/verify-email",verifyEmail)
 
 export default authRouter

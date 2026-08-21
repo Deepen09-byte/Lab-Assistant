@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router'
+import { useAuth } from '../hook/useAuth'
+import { useNavigate } from 'react-router'
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -7,6 +10,10 @@ const Register = () => {
     email: '',
     password: '',
   })
+
+  const navigate = useNavigate()
+
+  const {handleRegister} = useAuth()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -16,9 +23,13 @@ const Register = () => {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Register form submitted:', formData)
+    const { email, username, password } = formData;
+
+    await handleRegister({email, username, password})
+    navigate("/login")
+
   }
 
   return (

@@ -9,4 +9,6 @@ export const initializeSocket= () => {
     socket.on("connect", ()=> {
         console.log("connected to Socket.Io server")
     })
+
+    return socket
 }

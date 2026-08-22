@@ -1,47 +1,48 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useChat } from "../hooks/useChat";
+import { setCurrentChatId } from "../chat.slice";
 
-const initialChats = [
-  { id: 1, title: "Planning a weekend trip", preview: "Here are a few ideas for your itinerary...", time: "10:42 AM" },
-  { id: 2, title: "Explain quantum computing", preview: "The simplest way to understand it is...", time: "Yesterday" },
-  { id: 3, title: "Best books to read", preview: "I would start with these five picks...", time: "Mon" },
-  { id: 4, title: "Healthy dinner recipes", preview: "A quick, colorful meal you can make...", time: "Sun" },
-];
 
 const Dashboard = () => {
-  const { initializeSocket } = useChat();
+  const { handleSendMessage, initializeSocket } = useChat();
+
+  const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.auth);
-  const [selectedChat, setSelectedChat] = useState(initialChats[0]);
+
+  const chats = useSelector((state) => state.chat.chats);
+
+  const currentChatId = useSelector((state) => state.chat.currentChatId);
+
+  // const selectedChat = chats?.[currentChatId];
+
+  const currentChat = chats?.[currentChatId];
+
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      role: "user",
-      content: "Can you help me plan a relaxed weekend trip?",
-    },
-    {
-      id: 2,
-      role: "assistant",
-      content:
-        "Absolutely. Tell me your destination, budget, and what kind of pace you would enjoy, and I will put together a thoughtful itinerary.",
-    },
-  ]);
+
+  // const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const socket = initializeSocket();
     return () => socket?.disconnect?.();
   }, [initializeSocket]);
 
-  const handleSubmit = (event) => {
+  // useEffect(() => {
+  //       if (!selectedChat && chats.length > 0) {
+  //           selectedChat(chats[0]);
+  //       }
+  //   }, [chats, selectedChat]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
     const trimmedMessage = message.trim();
+
     if (!trimmedMessage) return;
 
-    setMessages((currentMessages) => [
-      ...currentMessages,
-      { id: Date.now(), role: "user", content: trimmedMessage },
-    ]);
+    await handleSendMessage({ message: trimmedMessage, chatId: currentChatId });
+
     setMessage("");
   };
 
@@ -79,24 +80,22 @@ const Dashboard = () => {
               Recent chats
             </p>
             <nav aria-label="Recent chats" className="space-y-1">
-              {initialChats.map((chatItem) => (
+              {Object.values(chats).map((chat) => (
                 <button
-                  key={chatItem.id}
+                  key={chat.id}
                   type="button"
-                  onClick={() => setSelectedChat(chatItem)}
-                  className={`w-full rounded-xl px-3 py-3 text-left transition ${selectedChat.id === chatItem.id ? "bg-[#20272a] shadow-[0_3px_14px_rgba(0,0,0,0.16)] ring-1 ring-[#4a565a]" : "hover:bg-[#1a2023]"}`}
+                  onClick={() => dispatch(setCurrentChatId(chat.id))}
+                  className={`w-full rounded-xl px-3 py-3 text-left transition ${
+                    currentChatId === chat.id
+                      ? "bg-[#20272a] shadow-[0_3px_14px_rgba(0,0,0,0.16)] ring-1 ring-[#4a565a]"
+                      : "hover:bg-[#1a2023]"
+                  }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate text-sm font-semibold text-[#d8dddf]">
-                      {chatItem.title}
-                    </span>
-                    <span className="shrink-0 text-[10px] text-[#7d878a]">
-                      {chatItem.time}
+                      {chat.title}
                     </span>
                   </div>
-                  <p className="mt-1 truncate text-xs text-[#8a9497]">
-                    {chatItem.preview}
-                  </p>
                 </button>
               ))}
             </nav>
@@ -120,7 +119,7 @@ const Dashboard = () => {
         <section className="flex min-w-0 flex-1 flex-col bg-[#15191b]">
           <header className="flex items-center justify-between border-b border-[#2b3235] px-5 py-5 sm:px-10">
             <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#303a3f] text-sm font-bold text-[#d3d8da] md:hidden">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#303a3f] text-sm font-bold text-[#d3d8da] md:hidden">
                 P
               </div>
               <div>
@@ -128,7 +127,7 @@ const Dashboard = () => {
                   Conversation
                 </p>
                 <h1 className="mt-1 truncate text-lg font-bold tracking-[-0.02em] text-[#e6e9ea] sm:text-xl">
-                  {selectedChat.title}
+                  {currentChat?.title || "New conversation"}
                 </h1>
               </div>
             </div>
@@ -142,12 +141,12 @@ const Dashboard = () => {
           </header>
           <div className="flex flex-1 flex-col justify-end overflow-y-auto px-5 py-8 sm:px-16 lg:px-28">
             <div className="mx-auto w-full max-w-3xl space-y-7">
-              {messages.map((item) => (
+              {currentChat?.messages?.map((item) => (
                 <article
-                  key={item.id}
+                  key={item._id}
                   className={`flex gap-3 ${item.role === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  {item.role === "assistant" && (
+                  {item.role === "ai" && (
                     <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#3b4548] text-xs font-bold text-white">
                       P
                     </div>

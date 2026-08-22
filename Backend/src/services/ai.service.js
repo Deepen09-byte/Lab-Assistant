@@ -3,7 +3,7 @@ import { ChatMistralAI } from "@langchain/mistralai";
 import {HumanMessage, SystemMessage, AIMessage} from "langchain"
 
 const geminiModel = new ChatGoogleGenerativeAI({
-  model: "gemini-2.5-flash-lite",
+  model: "gemini-3.5-flash-lite",
   apiKey: process.env.GEMINI_API_KEY,
 });
 
@@ -14,7 +14,7 @@ const mistralModel = new ChatMistralAI({
 
 export async function generateResponse(messages){
 
-  const response = geminiModel.invoke(messages.map(msg=>{
+  const response = await geminiModel.invoke(messages.map(msg=>{
     if(msg.role=="user"){
       return new HumanMessage(msg.content)
     }else if(msg.role=="ai"){
@@ -22,7 +22,7 @@ export async function generateResponse(messages){
     }
   }));
 
-  return response.text;
+  return response.content;
 
 }
 
@@ -41,6 +41,6 @@ export async function generateChatTitle(message){
   ])
 
 
-  return response.text;
+  return response.content;
 
 }

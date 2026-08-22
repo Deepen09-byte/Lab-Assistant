@@ -1,32 +1,57 @@
-import {createSlice} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const chatSlice = createSlice({
-    name: 'chat',
-    initialState:{
-        chats:{},
-        currentChatId: null,
-        isLoading: false,
-        error: null,
+  name: "chat",
+  initialState: {
+    chats: {},
+    currentChatId: null,
+    isLoading: false,
+    error: null,
+  },
+  reducers: {
+    createNewChat: (state, action) => {
+      const { chatId, title } = action.payload;
+
+      if (!state.chats[chatId]) {
+        state.chats[chatId] = {
+          id: chatId,
+          title,
+          messages: [],
+          lastUpdated: new Date().toISOString(),
+        };
+      }
     },
-    reducers:{
-        setChats:(state, action) => {
-            state.chats = action.payload
-        },
 
-        setCurrentChatId:(state, action) => {
-            state.currentChatId = action.payload
-        },
+    addNewMessage: (state, action) => {
+      const { chatId, content, role, id} = action.payload;
+      state.chats[chatId].messages.push({_id:id, content, role });
+    },
 
-        setLoading:(state, action) => {
-            state.isLoading = action.payload
-        },
+    setChats: (state, action) => {
+      state.chats = action.payload;
+    },
 
-        setError:(state, action) => {
-            state.error = action.payload
-        },
-    }
-})
+    setCurrentChatId: (state, action) => {
+      state.currentChatId = action.payload;
+    },
 
-export const {setChats, setCurrentChatId, setLoading, setError} = chatSlice.actions
+    setLoading: (state, action) => {
+      state.isLoading = action.payload;
+    },
 
-export default chatSlice.reducer
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+  },
+});
+
+export const {
+  setChats,
+  setCurrentChatId,
+  setLoading,
+  setError,
+  createNewChat,
+  addNewMessage,
+} = chatSlice.actions;
+
+export default chatSlice.reducer;

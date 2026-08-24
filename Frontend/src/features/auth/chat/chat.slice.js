@@ -20,6 +20,7 @@ const chatSlice = createSlice({
           lastUpdated: new Date().toISOString(),
         };
       }
+      state.currentChatId = chatId;
     },
 
 addNewMessage: (state, action) => {

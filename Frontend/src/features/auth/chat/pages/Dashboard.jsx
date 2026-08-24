@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useChat } from "../hooks/useChat";
 import { setCurrentChatId, clearCurrentChat } from "../chat.slice";
 
-
 const Dashboard = () => {
-  const { handleSendMessage, initializeSocket, loadChats, loadMessages} = useChat();
+  const { handleSendMessage, initializeSocket, loadChats, loadMessages } =
+    useChat();
 
   const dispatch = useDispatch();
 
@@ -15,40 +15,29 @@ const Dashboard = () => {
 
   const currentChatId = useSelector((state) => state.chat.currentChatId);
 
-  // const selectedChat = chats?.[currentChatId];
-
   const currentChat = chats?.[currentChatId];
 
   const [message, setMessage] = useState("");
+  const messagesEndRef = useRef(null);
 
-  // const [messages, setMessages] = useState([]);
   useEffect(() => {
     const socket = initializeSocket();
     return () => socket?.disconnect?.();
   }, [initializeSocket]);
 
-useEffect(() => {
-  loadChats();
-}, []);
+  useEffect(() => {
+    loadChats();
+  }, []);
 
-useEffect(() => {
+  useEffect(() => {
     if (currentChatId) {
-        loadMessages(currentChatId);
+      loadMessages(currentChatId);
     }
-}, [currentChatId]);
+  }, [currentChatId]);
 
-// useEffect(() => {
-//   if (!currentChatId && Object.keys(chats).length > 0) {
-//     const firstChatId = Object.keys(chats)[0];
-
-//     dispatch(setCurrentChatId(firstChatId));
-//   }
-// }, [chats, currentChatId, dispatch]);
-  // useEffect(() => {
-  //       if (!selectedChat && chats.length > 0) {
-  //           selectedChat(chats[0]);
-  //       }
-  //   }, [chats, selectedChat]);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [currentChat?.messages?.length]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -67,9 +56,9 @@ useEffect(() => {
   const initials = displayName.slice(0, 2).toUpperCase();
 
   return (
-    <main className="min-h-screen bg-[#080a0b] px-3 py-3 font-sans text-[#d9dfe1] sm:px-6 sm:py-6">
-      <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] max-w-360 overflow-hidden rounded-[28px] border border-[#2c3235] bg-[#15191b] shadow-[0_24px_70px_rgba(0,0,0,0.42)] sm:min-h-[calc(100vh-3rem)]">
-        <aside className="hidden w-72.5 shrink-0 flex-col border-r border-[#2c3235] bg-[#111416] md:flex">
+    <main className="h-screen overflow-hidden bg-[#080a0b] px-3 py-3 font-sans text-[#d9dfe1] sm:px-6 sm:py-6">
+      <div className="mx-auto flex h-[calc(100vh-1.5rem)] min-h-0 max-w-360 overflow-hidden rounded-[28px] border border-[#2c3235] bg-[#15191b] shadow-[0_24px_70px_rgba(0,0,0,0.42)] sm:h-[calc(100vh-3rem)]">
+        <aside className="hidden min-h-0 w-72.5 shrink-0 flex-col border-r border-[#2c3235] bg-[#111416] md:flex">
           <div className="flex items-center gap-3 px-7 py-8">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3b4548] text-lg font-bold text-white">
               P
@@ -85,18 +74,18 @@ useEffect(() => {
           </div>
           <div className="px-4">
             <button
-  type="button"
-  onClick={() => {
-    dispatch(clearCurrentChat());
-    setMessage("");
-  }}
-  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2b3437] px-4 py-3 text-sm font-semibold text-[#d3d8da] transition hover:bg-[#364146]"
->
-  <span className="text-lg leading-none">+</span>
-  New thread
-</button>
+              type="button"
+              onClick={() => {
+                dispatch(clearCurrentChat());
+                setMessage("");
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2b3437] px-4 py-3 text-sm font-semibold text-[#d3d8da] transition hover:bg-[#364146]"
+            >
+              <span className="text-lg leading-none">+</span>
+              New thread
+            </button>
           </div>
-          <div className="mt-8 flex-1 overflow-y-auto px-3">
+          <div className="mt-8 min-h-0 flex-1 overflow-y-auto px-3 [scrollbar-color:#4a565a_transparent] scrollbar-thin [&::-webkit-scrollbar-thumb:hover]:bg-[#657276] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#4a565a] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1">
             <p className="px-3 pb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[#7d878a]">
               Recent chats
             </p>
@@ -137,7 +126,7 @@ useEffect(() => {
           </div>
         </aside>
 
-        <section className="flex min-w-0 flex-1 flex-col bg-[#15191b]">
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col bg-[#15191b]">
           <header className="flex items-center justify-between border-b border-[#2b3235] px-5 py-5 sm:px-10">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#303a3f] text-sm font-bold text-[#d3d8da] md:hidden">
@@ -160,8 +149,8 @@ useEffect(() => {
               •••
             </button>
           </header>
-          <div className="flex flex-1 flex-col justify-end overflow-y-auto px-5 py-8 sm:px-16 lg:px-28">
-            <div className="mx-auto w-full max-w-3xl space-y-7">
+          <div className="flex min-h-0 flex-1 scroll-smooth overflow-y-auto px-5 py-8 sm:px-16 lg:px-28 [scrollbar-color:#4a565a_transparent] scrollbar-thin [&::-webkit-scrollbar-thumb:hover]:bg-[#657276] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#4a565a] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1">
+            <div className="mx-auto min-h-full w-full max-w-3xl space-y-7">
               {currentChat?.messages?.map((item) => (
                 <article
                   key={item._id}
@@ -188,6 +177,7 @@ useEffect(() => {
                   )}
                 </article>
               ))}
+              <div ref={messagesEndRef} aria-hidden="true" />
             </div>
           </div>
           <div className="px-5 pb-5 sm:px-10 sm:pb-8">

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ReactMarkdown from "react-markdown";
 import { useChat } from "../hooks/useChat";
 import { setCurrentChatId, clearCurrentChat } from "../chat.slice";
 
@@ -168,7 +169,75 @@ const Dashboard = () => {
                         : "max-w-[85%] pt-1 text-[15px] leading-7 text-[#b8c0c3]"
                     }
                   >
-                    {item.content}
+                    {item.role === "ai" ? (
+                      <ReactMarkdown
+                        components={{
+                          h1: ({ children }) => (
+                            <h1 className="mb-3 mt-5 text-xl font-bold text-[#e6e9ea] first:mt-0">
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({ children }) => (
+                            <h2 className="mb-2 mt-4 text-lg font-bold text-[#e6e9ea] first:mt-0">
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({ children }) => (
+                            <h3 className="mb-2 mt-4 font-bold text-[#e6e9ea] first:mt-0">
+                              {children}
+                            </h3>
+                          ),
+                          p: ({ children }) => (
+                            <p className="mb-3 last:mb-0">{children}</p>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="mb-3 list-disc space-y-1 pl-5 last:mb-0">
+                              {children}
+                            </ul>
+                          ),
+                          ol: ({ children }) => (
+                            <ol className="mb-3 list-decimal space-y-1 pl-5 last:mb-0">
+                              {children}
+                            </ol>
+                          ),
+                          blockquote: ({ children }) => (
+                            <blockquote className="my-3 border-l-2 border-[#657276] pl-4 text-[#aab4b7]">
+                              {children}
+                            </blockquote>
+                          ),
+                          a: ({ children, href }) => (
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[#d7e2e2] underline decoration-[#657276] underline-offset-2 hover:text-white"
+                            >
+                              {children}
+                            </a>
+                          ),
+                          pre: ({ children }) => (
+                            <pre className="my-3 overflow-x-auto rounded-lg bg-[#101416] p-4 text-sm leading-6 text-[#d7dcde]">
+                              {children}
+                            </pre>
+                          ),
+                          code: ({ children, className }) => (
+                            <code
+                              className={
+                                className
+                                  ? className
+                                  : "rounded bg-[#293235] px-1.5 py-0.5 text-[0.9em] text-[#e1e7e8]"
+                              }
+                            >
+                              {children}
+                            </code>
+                          ),
+                        }}
+                      >
+                        {item.content}
+                      </ReactMarkdown>
+                    ) : (
+                      item.content
+                    )}
                   </div>
                   {item.role === "user" && (
                     <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#384247] text-[10px] font-bold text-[#d3d8da]">

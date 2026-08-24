@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useChat } from "../hooks/useChat";
-import { setCurrentChatId } from "../chat.slice";
+import { setCurrentChatId, clearCurrentChat } from "../chat.slice";
 
 
 const Dashboard = () => {
-  const { handleSendMessage, initializeSocket } = useChat();
+  const { handleSendMessage, initializeSocket, loadChats, loadMessages} = useChat();
 
   const dispatch = useDispatch();
 
@@ -22,12 +22,28 @@ const Dashboard = () => {
   const [message, setMessage] = useState("");
 
   // const [messages, setMessages] = useState([]);
-
   useEffect(() => {
     const socket = initializeSocket();
     return () => socket?.disconnect?.();
   }, [initializeSocket]);
 
+useEffect(() => {
+  loadChats();
+}, []);
+
+useEffect(() => {
+    if (currentChatId) {
+        loadMessages(currentChatId);
+    }
+}, [currentChatId]);
+
+// useEffect(() => {
+//   if (!currentChatId && Object.keys(chats).length > 0) {
+//     const firstChatId = Object.keys(chats)[0];
+
+//     dispatch(setCurrentChatId(firstChatId));
+//   }
+// }, [chats, currentChatId, dispatch]);
   // useEffect(() => {
   //       if (!selectedChat && chats.length > 0) {
   //           selectedChat(chats[0]);
@@ -69,11 +85,16 @@ const Dashboard = () => {
           </div>
           <div className="px-4">
             <button
-              type="button"
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2b3437] px-4 py-3 text-sm font-semibold text-[#d3d8da] transition hover:bg-[#364146]"
-            >
-              <span className="text-lg leading-none">+</span> New thread
-            </button>
+  type="button"
+  onClick={() => {
+    dispatch(clearCurrentChat());
+    setMessage("");
+  }}
+  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2b3437] px-4 py-3 text-sm font-semibold text-[#d3d8da] transition hover:bg-[#364146]"
+>
+  <span className="text-lg leading-none">+</span>
+  New thread
+</button>
           </div>
           <div className="mt-8 flex-1 overflow-y-auto px-3">
             <p className="px-3 pb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[#7d878a]">

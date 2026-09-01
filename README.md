@@ -35,4 +35,4 @@ A full-stack AI-powered chat web application inspired by Perplexity.ai. Users ca
 
 ## 🙋‍♂️ Author
 
-**Deepen** — [GitHub](https://github.com/Deepen09-byte) • [LinkedIn](https://linkedin.com/in/your-deepen09)
+**Deepen** — [GitHub](https://github.com/Deepen09-byte) • [LinkedIn](https://linkedin.com/in/deepen09)

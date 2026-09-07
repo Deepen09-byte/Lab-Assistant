@@ -16,6 +16,5 @@ connectDB()
   });
 
       httpServer.listen(process.env.PORT, () => {
-      console.log(`\n🚀 Server is running on http://localhost:${process.env.PORT}`);
       console.log(`📚 Lab Assistant API is live\n`);
     });

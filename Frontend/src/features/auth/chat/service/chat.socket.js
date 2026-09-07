@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 
 export const initializeSocket= () => {
 
-    const socket = io("http://localhost:3000",{
+    const socket = io("https://lab-assistant-kivm.onrender.com",{
         withCredentials:true
     })
 

@@ -1,34 +1,20 @@
-import nodemailer from "nodemailer"
-import dns from "dns"
+import { Resend } from 'resend';
 
-dns.setDefaultResultOrder("ipv4first") 
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  family: 4,
-  auth: {
-    user: process.env.BREVO_SMTP_LOGIN,
-    pass: process.env.BREVO_SMTP_KEY,
-  },
-});
+export async function sendEmail({ to, subject, html, text }) {
+  const { data, error } = await resend.emails.send({
+    from: 'onboarding@resend.dev', // domain verify karne tak yehi use kar
+    to,
+    subject,
+    html,
+    text
+  });
 
-transporter.verify()
-.then (() => {console.log("Email transporter is ready to send emails"); })
-.catch((err) => {console.error("Email transporter verification failed" ,err); });
+  if (error) {
+    console.error("Email send error:", error);
+    throw error;
+  }
 
-export async function sendEmail({to, subject, html, text}) {
-
-    const mailOptions = {
-        from: process.env.GOOGLE_USER,
-        to,
-        subject,
-        html,
-        text
-    };
-
-    const details = await transporter.sendMail(mailOptions);
-    
-    console.log("Email sent:" ,details)
+  console.log("Email sent:", data);
 }
